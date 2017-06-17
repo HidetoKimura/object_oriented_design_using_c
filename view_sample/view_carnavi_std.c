@@ -4,16 +4,16 @@
 
 typedef struct {
 	str_t*	name;
-} PnlMngTbl;
+} pnl_mng_tbl_t;
 
 typedef struct {
 	s32_t	now_panel_id;
 	s32_t	next_panel_id;
 	s32_t   panel_num;
-	PnlMngTbl** panels;
-} ViewMngTbl;
+	pnl_mng_tbl_t** panels;
+} view_mng_tbl_t;
 
-ViewMngTbl g_view_mng;
+view_mng_tbl_t g_view_mng;
 
 static const str_t* front_panel_namelist[] = {
 	"front_001", "front_002", "front_003"
@@ -120,10 +120,10 @@ void view_init(void)
 	g_view_mng.next_panel_id = PANEL_ID_FRONT_001;
 	
 	g_view_mng.panel_num = PANEL_ID_FRONT_MAX;
-	g_view_mng.panels = malloc(sizeof(PnlMngTbl*) * PANEL_ID_FRONT_MAX);
+	g_view_mng.panels = malloc(sizeof(pnl_mng_tbl_t*) * PANEL_ID_FRONT_MAX);
 	
 	for(i = 0; i < g_view_mng.panel_num; i++) {	
-		g_view_mng.panels[i] = malloc(sizeof(PnlMngTbl));
+		g_view_mng.panels[i] = malloc(sizeof(pnl_mng_tbl_t));
 		g_view_mng.panels[i]->name = (str_t*)front_panel_namelist[i];
 	}
 }
@@ -165,6 +165,9 @@ void event_invoke(view_event_t event)
 	LOG_D("now_penel = %s, next_panel = %s", 
 		g_view_mng.panels[g_view_mng.now_panel_id]->name,
 		g_view_mng.panels[g_view_mng.next_panel_id]->name);
+
+	/* If there is no change panel id, then do no operation. */
+	if(g_view_mng.now_panel_id == g_view_mng.next_panel_id) return;
 
 	/* inactive view */
 	switch(g_view_mng.now_panel_id) {
